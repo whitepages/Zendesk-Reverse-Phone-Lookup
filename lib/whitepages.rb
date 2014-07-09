@@ -52,24 +52,10 @@ class Whitepages
 
   def get_location(location_keys_hash,location_keys_array,dictionaryData)
     location_array = []
-    unless location_keys_hash.blank?
-      location_keys_hash.each {|key, value|
-        locationObj = dictionaryData[value]
-        location_array << locationObj["city"]
-        location_array << locationObj["postal_code"]
-        location_array << locationObj["state_code"]
-        location_array << locationObj["standard_address_line1"]
-        location_array << locationObj["standard_address_line2"]
-      }
-    end
-    unless location_keys_array.blank?
-      location_keys_hash[0] = location_keys_array[0]
-      locationObj = dictionaryData[location_keys_array[0]]
-      location_array << locationObj["city"]
-      location_array << locationObj["postal_code"]
-      location_array << locationObj["state_code"]
-      location_array << locationObj["standard_address_line1"]
-      location_array << locationObj["standard_address_line2"]
+    if !location_keys_hash.blank?
+      location_keys_hash.each {|key, value| location_array << dictionaryData[value]["city"] << dictionaryData[value]["postal_code"] << dictionaryData[value]["state_code"] << dictionaryData[value]["standard_address_line1"] << dictionaryData[value]["standard_address_line2"] }
+    elsif !location_keys_array.blank?
+      location_array << dictionaryData[location_keys_array[0]]["city"] << dictionaryData[location_keys_array[0]]["postal_code"] << dictionaryData[location_keys_array[0]]["state_code"] << dictionaryData[location_keys_array[0]]["standard_address_line1"] << dictionaryData[location_keys_array[0]]["standard_address_line2"]
     end
     return location_array
   end
