@@ -78,25 +78,11 @@ class Whitepages
   def name(personObjName)
     name_array = []
     unless personObjName.blank?
-      person_name = personObjName
-      unless person_name.index(" ").blank?
-        if person_name.index(" ") > 0
-          person_name_arr = person_name.to_s.split(" ")
-          if person_name_arr.length > 2
-            fname = ""
-            for i in 0..person_name_arr.length-2
-              fname = fname + person_name_arr[i] + " "
-            end
-            name_array <<  fname
-            name_array <<  person_name_arr[person_name_arr.length-1]
-          else
-            name_array <<  person_name_arr[0]
-            name_array <<  person_name_arr[1]
-          end
-        end
+      unless personObjName.index(" ").blank?
+        person_name_arr = personObjName.to_s.split(" ")
+        name_array <<  person_name_arr[0] << person_name_arr[1]
       else
-        name_array <<  person_name
-        name_array <<  ""
+        name_array <<  person_name  << ""
       end
     end
     return name_array
@@ -106,11 +92,7 @@ class Whitepages
   def names(personObjNames)
     names_array = []
     unless personObjNames.blank?
-      personObjNames =  personObjNames
-      unless personObjNames.blank?
-        names_array <<  personObjNames[0]["first_name"].blank? ? "" : personObjNames[0]["first_name"]+" "
-        names_array <<  personObjNames[0]["last_name"].blank? ? "" : personObjNames[0]["last_name"]
-      end
+      names_array <<  personObjNames[0]["first_name"].blank? ? "" : personObjNames[0]["first_name"]+" "   <<  personObjNames[0]["last_name"].blank? ? "" : personObjNames[0]["last_name"]
     end
     return names_array
   end
@@ -146,17 +128,12 @@ class Whitepages
 
           name_arr =  name(personObj["name"])
           unless name_arr.blank?
-            #first_name = name_arr[0]
-            #last_name = name_arr[1]
-
             person["first_name"] = name_arr[0]
             person["last_name"] = name_arr[1]
           end
 
           names_arr = names(personObj["names"])
           unless names_arr.blank?
-            #first_name = names_arr[0]
-            #last_name = names_arr[1]
             person["first_name"] =names_arr[0]
             person["last_name"] =names_arr[1]
           end
