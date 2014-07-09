@@ -50,15 +50,33 @@ class Whitepages
     return best_location
   end
 
-  def get_location(location_keys_hash,location_keys_array,dictionaryData)
+  #def get_location(location_keys_hash,location_keys_array,dictionaryData)
+  #  location_array = []
+  #  if !location_keys_hash.blank?
+  #    location_keys_hash.each {|key, value| location_array << dictionaryData[value]["city"] << dictionaryData[value]["postal_code"] << dictionaryData[value]["state_code"] << dictionaryData[value]["standard_address_line1"] << dictionaryData[value]["standard_address_line2"] }
+  #  elsif !location_keys_array.blank?
+  #    location_array << dictionaryData[location_keys_array[0]]["city"] << dictionaryData[location_keys_array[0]]["postal_code"] << dictionaryData[location_keys_array[0]]["state_code"] << dictionaryData[location_keys_array[0]]["standard_address_line1"] << dictionaryData[location_keys_array[0]]["standard_address_line2"]
+  #  end
+  #  return location_array
+  #end
+
+
+  def get_location_hash(location_keys_hash, dictionaryData)
     location_array = []
     if !location_keys_hash.blank?
       location_keys_hash.each {|key, value| location_array << dictionaryData[value]["city"] << dictionaryData[value]["postal_code"] << dictionaryData[value]["state_code"] << dictionaryData[value]["standard_address_line1"] << dictionaryData[value]["standard_address_line2"] }
-    elsif !location_keys_array.blank?
-      location_array << dictionaryData[location_keys_array[0]]["city"] << dictionaryData[location_keys_array[0]]["postal_code"] << dictionaryData[location_keys_array[0]]["state_code"] << dictionaryData[location_keys_array[0]]["standard_address_line1"] << dictionaryData[location_keys_array[0]]["standard_address_line2"]
     end
     return location_array
   end
+
+  def get_location_array(location_keys_array, dictionaryData)
+    location_array = []
+    if !location_keys_array.blank?
+      location_array << dictionaryData[location_keys_array[0]]["city"] << dictionaryData[location_keys_array[0]]["postal_code"] << dictionaryData[location_keys_array[0]]["state_code"] << dictionaryData[location_keys_array[0]]["standard_address_line1"] << dictionaryData[location_keys_array[0]]["standard_address_line2"]
+    end
+     return location_array
+  end
+
 
 
   def name(personObjName)
@@ -141,7 +159,26 @@ class Whitepages
         end
       end
 
-      location_var = get_location(location_keys_hash,location_keys_array,dictionaryData)
+      #location_var = get_location(location_keys_hash,location_keys_array,dictionaryData)
+      #unless location_var.blank?
+      #  person["city"] =location_var[0]
+      #  person["state_code"] =location_var[1]
+      #  person["postal_code"] =location_var[2]
+      #  person["standard_address_line1"] =location_var[3]
+      #  person["standard_address_line2"] =location_var[4]
+      #end
+
+
+      location_hash_var = get_location_hash(location_keys_hash,dictionaryData)
+      unless location_hash_var.blank?
+        person["city"] =location_hash_var[0]
+        person["state_code"] =location_hash_var[1]
+        person["postal_code"] =location_hash_var[2]
+        person["standard_address_line1"] =location_hash_var[3]
+        person["standard_address_line2"] =location_hash_var[4]
+      end
+
+      location_var = get_location_array(location_keys_array,dictionaryData)
       unless location_var.blank?
         person["city"] =location_var[0]
         person["state_code"] =location_var[1]
@@ -149,6 +186,8 @@ class Whitepages
         person["standard_address_line1"] =location_var[3]
         person["standard_address_line2"] =location_var[4]
       end
+
+
     end
     return person
     #render :json => request_phone_details.to_json, :status => 200 and return false
