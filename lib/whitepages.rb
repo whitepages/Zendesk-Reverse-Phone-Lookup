@@ -50,16 +50,23 @@ class Whitepages
     return best_location
   end
 
-  def get_location(location_keys_hash,location_keys_array,dictionaryData)
+  def get_location_val(location_keys,dictionaryData,type)
     location_array = []
-    unless location_keys_hash.blank?
-      location_keys_hash.each {|key, value|
-        location_array << dictionaryData[value]["city"] << dictionaryData[value]["postal_code"] << dictionaryData[value]["state_code"] << dictionaryData[value]["standard_address_line1"] << dictionaryData[value]["standard_address_line2"]
+    if type == "hash"
+      location_keys.each {|key, value|
+        location_array << dictionaryData[value]["city"]
+        location_array << dictionaryData[value]["postal_code"]
+        location_array << dictionaryData[value]["state_code"]
+        location_array << dictionaryData[value]["standard_address_line1"]
+        location_array << dictionaryData[value]["standard_address_line2"]
       }
-    end
-    unless location_keys_array.blank?
-      locationObj = dictionaryData[location_keys_array[0]]
-      location_array << locationObj["city"] << locationObj["postal_code"] << locationObj["state_code"] << locationObj["standard_address_line1"] << locationObj["standard_address_line2"]
+    else
+      locationObj = dictionaryData[location_keys[0]]
+      location_array << locationObj["city"]
+      location_array << locationObj["postal_code"]
+      location_array << locationObj["state_code"]
+      location_array << locationObj["standard_address_line1"]
+      location_array << locationObj["standard_address_line2"]
     end
     return location_array
   end
@@ -99,6 +106,7 @@ class Whitepages
       person_keys_array= []
       person = Hash.new
       location_keys_array   = []
+      name_arr = []
       results_phones_array.each do|phone_obj|
         phoneObj = dictionaryData[phone_obj]
 
@@ -116,20 +124,11 @@ class Whitepages
       unless person_keys_array.blank?
         person_keys_array.each_with_index do|person_obj,person_index|
           personObj = dictionaryData[person_obj]
-          unless personObj["name"].blank?
-            name_arr =  name(personObj["name"])
-            unless name_arr.blank?
-              person["first_name"] = name_arr[0]
-              person["last_name"] = name_arr[1]
-            end
-          end
 
-          unless personObj["names"].blank?
-            names_arr = names(personObj["names"])
-            unless names_arr.blank?
-              person["first_name"] =names_arr[0]
-              person["last_name"] =names_arr[1]
-            end
+          if !personObj["name"].blank?
+            name_arr =  name(personObj["name"])
+          elsif !personObj["names"].blank?
+            name_arr = names(personObj["names"])
           end
 
           unless personObj["locations"].blank?
@@ -147,12 +146,20 @@ class Whitepages
             end
           end
         end
+        person["first_name"] = name_arr[0]
+        person["last_name"] = name_arr[1]
       else
         person["first_name"] = ""
         person["last_name"] = ""
       end
 
-      location_var = get_location(location_keys_hash,location_keys_array,dictionaryData)
+      unless location_keys_hash.blank?
+        location_var = get_location_val(location_keys_hash,dictionaryData,"hash")
+      end
+
+      unless location_keys_array.blank?
+        location_var = get_location_val(location_keys_array,dictionaryData,"array")
+      end
       unless location_var.blank?
         person["city"] =location_var[0]
         person["state_code"] =location_var[1]
@@ -160,8 +167,8 @@ class Whitepages
         person["standard_address_line1"] =location_var[3]
         person["standard_address_line2"] =location_var[4]
       end
-    end 
-    
+    end
+
     hash = { person: person }
 
     return hash
